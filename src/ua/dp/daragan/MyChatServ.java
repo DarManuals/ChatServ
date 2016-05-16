@@ -1,17 +1,23 @@
+//use: telnet 127.0.0.1 8080
+//write "exit" for close
 package ua.dp.daragan;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Scanner;
 
 public class MyChatServ implements ClientsListner{
     private ArrayList<Clients> clients;
     private LinkedList<String> allMsg;
     private int countOfMsgs = 0;
     private ServerSocket servSock = null;
-    Socket sock = null;
+    
+    Socket sock = null; //to do
 
     public MyChatServ() {
         clients = new ArrayList();
@@ -20,6 +26,7 @@ public class MyChatServ implements ClientsListner{
 
     public static void main(String[] args) {
         MyChatServ mcs = new MyChatServ();
+        boolean exit = false;
         
         try{
             mcs.servSock = new ServerSocket(8080);
@@ -28,13 +35,30 @@ public class MyChatServ implements ClientsListner{
             System.err.println(e.getStackTrace());
         }
         
+        //--------------------------
+        one : while (true){
+           
+            try{
+                mcs.sock = mcs.servSock.accept();
+                Scanner sc = new Scanner( mcs.sock.getInputStream() );
+                
+                while(sc.hasNextLine()){
+                    String str1 = sc.nextLine();
+                    if(str1.equalsIgnoreCase("exit") ) break one;
+                    System.out.println(str1);   
+                }
+                mcs.sock.close();
+
+            } catch (IOException e){
+                System.err.println(e.getStackTrace());
+            } 
+        }
+        //--------------------------
         
         
-        
-        Client a,b;
+        Client a,b; //tests
         a = new Client(mcs);
         b = new Client(mcs);
-        
         mcs.sendToAll();
         
         try{
