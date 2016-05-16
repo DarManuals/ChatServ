@@ -1,5 +1,6 @@
 package ua.dp.daragan;
 
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -7,6 +8,7 @@ public class MyChatServ implements ClientsListner{
     private ArrayList<Clients> clients;
     private LinkedList<String> allMsg;
     private int countOfMsgs = 0;
+    private ServerSocket ss = null;
 
     public MyChatServ() {
         clients = new ArrayList();
