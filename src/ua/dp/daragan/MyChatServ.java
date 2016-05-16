@@ -1,6 +1,8 @@
 package ua.dp.daragan;
 
+import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -8,7 +10,8 @@ public class MyChatServ implements ClientsListner{
     private ArrayList<Clients> clients;
     private LinkedList<String> allMsg;
     private int countOfMsgs = 0;
-    private ServerSocket ss = null;
+    private ServerSocket servSock = null;
+    Socket sock = null;
 
     public MyChatServ() {
         clients = new ArrayList();
@@ -18,7 +21,14 @@ public class MyChatServ implements ClientsListner{
     public static void main(String[] args) {
         MyChatServ mcs = new MyChatServ();
         
-        System.out.println("Server started");
+        try{
+            mcs.servSock = new ServerSocket(8080);
+            System.out.println("Server started on port 8080!");
+        } catch (IOException e){
+            System.err.println(e.getStackTrace());
+        }
+        
+        
         
         
         Client a,b;
@@ -26,6 +36,13 @@ public class MyChatServ implements ClientsListner{
         b = new Client(mcs);
         
         mcs.sendToAll();
+        
+        try{
+            mcs.servSock.close();
+            System.out.println("Server stopped!");
+        }catch (IOException ioe) {
+            System.err.println(ioe.getStackTrace());
+        }
     }
 
     @Override
