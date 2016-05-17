@@ -26,12 +26,16 @@ public class Client extends Thread implements Clients{
 
     @Override
     public void updateMsgs(LinkedList<String> allMsg) {
+        pr.println("---previous msgs---"); //for test
         for(String s : allMsg) {
             System.out.print(clientID + " - ");
-            System.out.println(s);
+            System.out.println(s);           
             pr.println(s);
-            pr.flush();
+            //pr.flush();
         }
+        pr.println("---end of msgs---");//for test
+        pr.print("Your msg: ");
+        pr.flush();
     }
     
     public void run(){
@@ -43,7 +47,7 @@ public class Client extends Thread implements Clients{
                     String str = sc.nextLine();
                     if(str.equalsIgnoreCase("exit") ) break outer;
                     System.err.println(str);
-                    server.addMsg(str);
+                    server.addMsg("ID" + clientID + ":" + str);
                 }
                 
             }catch(Exception e){
