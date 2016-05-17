@@ -1,5 +1,3 @@
-//use: telnet 127.0.0.1 8080
-//write "exit" for close
 package ua.dp.daragan;
 
 import java.io.IOException;
@@ -33,6 +31,7 @@ public class MyChatServ implements ClientsListner{
         return mcs;
     }
     
+    @Override
     public ServerSocket getServSock (){
         return servSock;
     }
@@ -58,6 +57,7 @@ public class MyChatServ implements ClientsListner{
         }
     }
     
+    @Override
     public void addMsg(String s){ //add msg from client to stack
         if(countOfMsgs <5){
             this.allMsg.add(s);
