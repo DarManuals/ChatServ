@@ -1,5 +1,8 @@
 package ua.dp.daragan;
 
+import java.util.LinkedList;
+
 public interface Clients {
-    public void updateMsgs(String str);
+    public void updateMsgs(LinkedList<String> allMsg);
+    public void sendMsgToServ(String s);
 }

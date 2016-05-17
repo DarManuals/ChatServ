@@ -2,71 +2,39 @@
 //write "exit" for close
 package ua.dp.daragan;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Scanner;
 
 public class MyChatServ implements ClientsListner{
+    private static MyChatServ mcs = null;
     private ArrayList<Clients> clients;
     private LinkedList<String> allMsg;
     private int countOfMsgs = 0;
     private ServerSocket servSock = null;
     
-    Socket sock = null; //to do
 
-    public MyChatServ() {
-        clients = new ArrayList();
-    }
-    
-
-    public static void main(String[] args) {
-        MyChatServ mcs = new MyChatServ();
-        boolean exit = false;
-        
+    private MyChatServ() {
+        clients = new ArrayList<Clients>();
+        allMsg = new LinkedList<String>();
         try{
-            mcs.servSock = new ServerSocket(8080);
+            servSock = new ServerSocket(8080);
             System.out.println("Server started on port 8080!");
         } catch (IOException e){
-            System.err.println(e.getStackTrace());
+            System.err.println("Server error: " + e);
         }
-        
-        //--------------------------
-        one : while (true){
-           
-            try{
-                mcs.sock = mcs.servSock.accept();
-                Scanner sc = new Scanner( mcs.sock.getInputStream() );
-                
-                while(sc.hasNextLine()){
-                    String str1 = sc.nextLine();
-                    if(str1.equalsIgnoreCase("exit") ) break one;
-                    System.out.println(str1);   
-                }
-                mcs.sock.close();
-
-            } catch (IOException e){
-                System.err.println(e.getStackTrace());
-            } 
+    }
+    
+    public static MyChatServ getInstance(){
+        if(mcs == null) {
+            mcs = new MyChatServ();
         }
-        //--------------------------
-        
-        
-        Client a,b; //tests
-        a = new Client(mcs);
-        b = new Client(mcs);
-        mcs.sendToAll();
-        
-        try{
-            mcs.servSock.close();
-            System.out.println("Server stopped!");
-        }catch (IOException ioe) {
-            System.err.println(ioe.getStackTrace());
-        }
+        return mcs;
+    }
+    
+    public ServerSocket getServSock (){
+        return servSock;
     }
 
     @Override
@@ -86,8 +54,12 @@ public class MyChatServ implements ClientsListner{
     public void sendToAll() {
         for(int i = 0; i<clients.size(); i++){
             Clients client = clients.get(i);
-            client.updateMsgs("test");//to do
+            client.updateMsgs( allMsg );//to do
         }
     }
     
+    public void addMsg(String s){ //add msg from client to stack
+        this.allMsg.add(s);
+        sendToAll();
+    }  
 }
