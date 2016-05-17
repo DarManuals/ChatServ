@@ -4,10 +4,8 @@ package ua.dp.daragan;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Scanner;
 
 public class MyChatServ implements ClientsListner{
     private static MyChatServ mcs = null;
@@ -24,7 +22,7 @@ public class MyChatServ implements ClientsListner{
             servSock = new ServerSocket(8080);
             System.out.println("Server started on port 8080!");
         } catch (IOException e){
-            System.err.println(e.getStackTrace());
+            System.err.println("Server error: " + e);
         }
     }
     
@@ -56,8 +54,12 @@ public class MyChatServ implements ClientsListner{
     public void sendToAll() {
         for(int i = 0; i<clients.size(); i++){
             Clients client = clients.get(i);
-            client.updateMsgs("test");//to do
+            client.updateMsgs( allMsg );//to do
         }
     }
     
+    public void addMsg(String s){ //add msg from client to stack
+        this.allMsg.add(s);
+        sendToAll();
+    }  
 }

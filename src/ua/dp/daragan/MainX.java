@@ -10,7 +10,13 @@ public class MainX {
     
         MyChatServ mcs = MyChatServ.getInstance();
         ServerSocket servSock = mcs.getServSock();
-    
+        
+        Client cl = new Client(mcs);
+        cl.sendMsgToServ("test1");
+        Client cl2 = new Client(mcs);
+        cl2.sendMsgToServ("test2");
+        Client cl3 = new Client(mcs);
+        cl3.sendMsgToServ("test3");
     
         try {
            
@@ -26,7 +32,7 @@ public class MainX {
                         if(str1.equalsIgnoreCase("exit") ) break one;
                         System.out.println(str1);   
                     }
-                    //mcs.sock.close();
+                    sock.close();
 
                 } catch (IOException e){
                     System.err.println(e.getStackTrace());
