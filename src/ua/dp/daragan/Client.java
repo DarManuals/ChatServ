@@ -1,25 +1,26 @@
 package ua.dp.daragan;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Client extends Thread implements Clients{
     private static int clientCount = 0;
     private int clientID = -1;
     private ClientsListner server;
     private Scanner sc;
+    private PrintWriter pr;
     private Socket sock;
 
-    public Client(ClientsListner cl, Socket s) {
+    public Client(ClientsListner cl, Socket s) throws IOException {
         server = cl;
         sock = s;
         server.addClient(this);
         clientCount++;
         clientID = clientCount;
+        pr = new PrintWriter(sock.getOutputStream() );
         start();
     }
 
@@ -28,6 +29,8 @@ public class Client extends Thread implements Clients{
         for(String s : allMsg) {
             System.out.print(clientID + " - ");
             System.out.println(s);
+            pr.println(s);
+            pr.flush();
         }
     }
     
@@ -48,6 +51,7 @@ public class Client extends Thread implements Clients{
             }
         }
         try {
+            pr.close();
             sock.close();
             this.interrupt();
             server.delClient(this);
