@@ -59,7 +59,14 @@ public class MyChatServ implements ClientsListner{
     }
     
     public void addMsg(String s){ //add msg from client to stack
-        this.allMsg.add(s);
-        sendToAll();
+        if(countOfMsgs <5){
+            this.allMsg.add(s);
+            countOfMsgs++;
+            sendToAll();
+        }else{
+            this.allMsg.remove(0);
+            this.allMsg.add(s);
+            sendToAll();
+        }        
     }  
 }
