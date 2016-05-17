@@ -30,11 +30,6 @@ public class Client extends Thread implements Clients{
             System.out.println(s);
         }
     }
-
-    @Override //delete this!!!
-    public void sendMsgToServ(String s) {
-        server.addMsg(s);
-    }
     
     public void run(){
         outer : while(true){
