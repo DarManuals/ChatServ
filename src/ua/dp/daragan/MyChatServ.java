@@ -1,29 +1,40 @@
+//use: telnet 127.0.0.1 8080
+//write "exit" for close
 package ua.dp.daragan;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class MyChatServ implements ClientsListner{
+    private static MyChatServ mcs = null;
     private ArrayList<Clients> clients;
     private LinkedList<String> allMsg;
     private int countOfMsgs = 0;
-
-    public MyChatServ() {
-        clients = new ArrayList();
-    }
+    private ServerSocket servSock = null;
     
 
-    public static void main(String[] args) {
-        MyChatServ mcs = new MyChatServ();
-        
-        System.out.println("Server started");
-        
-        
-        Client a,b;
-        a = new Client(mcs);
-        b = new Client(mcs);
-        
-        mcs.sendToAll();
+    private MyChatServ() {
+        clients = new ArrayList<Clients>();
+        allMsg = new LinkedList<String>();
+        try{
+            servSock = new ServerSocket(8080);
+            System.out.println("Server started on port 8080!");
+        } catch (IOException e){
+            System.err.println("Server error: " + e);
+        }
+    }
+    
+    public static MyChatServ getInstance(){
+        if(mcs == null) {
+            mcs = new MyChatServ();
+        }
+        return mcs;
+    }
+    
+    public ServerSocket getServSock (){
+        return servSock;
     }
 
     @Override
@@ -43,8 +54,12 @@ public class MyChatServ implements ClientsListner{
     public void sendToAll() {
         for(int i = 0; i<clients.size(); i++){
             Clients client = clients.get(i);
-            client.updateMsgs("test");//to do
+            client.updateMsgs( allMsg );//to do
         }
     }
     
+    public void addMsg(String s){ //add msg from client to stack
+        this.allMsg.add(s);
+        sendToAll();
+    }  
 }
