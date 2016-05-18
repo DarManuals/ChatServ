@@ -25,43 +25,63 @@ public class Client extends Thread implements Clients{
     }
 
     @Override
-    public void updateMsgs(LinkedList<String> allMsg) {
-        pr.println("---previous msgs---"); //for test
-        for(String s : allMsg) {
-            System.out.print(clientID + " - ");
-            System.out.println(s);           
-            pr.println(s);
-            //pr.flush();
-        }
-        pr.println("---end of msgs---");//for test
+    public synchronized void updateMsgs(LinkedList<String> allMsg) {
+        pr.println("---BEGIN---"); //for test
+        for(String s : allMsg) pr.println(s);
+        pr.println("---END---");//for test
         pr.print("Your msg: ");
         pr.flush();
     }
     
+    public synchronized void shutdown(){
+        try{
+            pr.close();
+            if( !sock.isClosed() ) sock.close();
+            this.interrupt();
+        }catch(Exception e){
+            System.err.println(e + " - " + this.getClass().getName() );
+        }
+    }
+    
     public void run(){
-        outer : while(true){
+        boolean stop = false;
+        outer : while(!stop){
             try{
-                Scanner sc = new Scanner(sock.getInputStream() );
-                System.err.println("Connected ID: " + clientID);
+                sc = new Scanner(sock.getInputStream() );
+                System.out.println("Connected ID: " + clientID);
                 while(sc.hasNextLine()){
                     String str = sc.nextLine();
-                    if(str.equalsIgnoreCase("exit") ) break outer;
+                    if(str.equalsIgnoreCase("shutdown") ){//test
+                        server.shutdown();
+                        stop = true;
+                        break outer;
+                    }
+                    if(str.equalsIgnoreCase("exit") ){
+                        stop = true;
+                        break outer;
+                    }
                     System.err.println(str);
-                    server.addMsg("ID" + clientID + ":" + str);
+                    server.addMsg("ID" + clientID + ":" + str);                   
                 }
+                sc.close();
                 
             }catch(Exception e){
-                System.err.println(e);
+                //System.err.println("Fix this in run method of Clien.java");
             }
         }
         try {
             pr.close();
-            sock.close();
-            this.interrupt();
+            if( !sock.isClosed() ) sock.close();
             server.delClient(this);
+            this.interrupt();            
             System.err.println( "ID: " + clientID + " Disconnected");
         } catch (Exception ex) {
-            System.err.println(ex);
+            System.err.println(ex + " - " + this.getClass().getName() );
         }       
     }  
+
+    @Override
+    public int getID() {
+        return this.clientID;
+    }
 }
