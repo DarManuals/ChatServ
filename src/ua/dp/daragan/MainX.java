@@ -18,12 +18,12 @@ public class MainX {
                 try{
                     new Client(mcs, servSock.accept() );
                 } catch (IOException e){
-                    System.err.println(e.getStackTrace());
+                    //System.err.println(e); some fixes are needed
                 } 
             }
             
         } catch (Exception e){
-            System.err.println(e.getStackTrace());
+            System.err.println(e);
         }
     }
 }

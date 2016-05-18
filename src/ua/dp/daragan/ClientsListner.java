@@ -8,4 +8,5 @@ public interface ClientsListner {
     public void addMsg(String s);
     public void sendToAll();
     public ServerSocket getServSock ();
+    public void shutdown();
 }
