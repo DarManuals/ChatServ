@@ -1,5 +1,3 @@
-//use: telnet 127.0.0.1 8080
-//write "exit" for close
 package ua.dp.daragan;
 
 import java.io.IOException;
@@ -8,11 +6,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class MyChatServ implements ClientsListner{
-    private static MyChatServ mcs = null;
-    private ArrayList<Clients> clients;
-    private LinkedList<String> allMsg;
-    private int countOfMsgs = 0;
-    private ServerSocket servSock = null;
+    private static volatile MyChatServ mcs = null;
+    private volatile ArrayList<Clients> clients;
+    private volatile LinkedList<String> allMsg;
+    private volatile int countOfMsgs = 0;
+    private volatile ServerSocket servSock = null;
     
 
     private MyChatServ() {
@@ -33,17 +31,31 @@ public class MyChatServ implements ClientsListner{
         return mcs;
     }
     
-    public ServerSocket getServSock (){
+    public void shutdown(){
+        try{
+            for( Clients c : clients){
+                c.shutdown();
+                System.out.println( "Client with ID=" + c.getID() + " - Closed");
+            }
+            if( !servSock.isClosed() ) servSock.close();
+            System.exit(0);
+        }catch(Exception e){
+            System.err.println(e + " - " + this.getClass().getName() );
+        }
+    }
+    
+    @Override
+    public synchronized ServerSocket getServSock (){
         return servSock;
     }
 
     @Override
-    public void addClient(Clients cl) {
+    public synchronized void addClient(Clients cl) {
         clients.add(cl);
     }
 
     @Override
-    public void delClient(Clients cl) {
+    public synchronized void delClient(Clients cl) {
         int i = clients.indexOf(cl);
         if(i >=0){
             clients.remove(i);
@@ -51,15 +63,23 @@ public class MyChatServ implements ClientsListner{
     }
 
     @Override
-    public void sendToAll() {
+    public synchronized void sendToAll() { //send to all connected clients
         for(int i = 0; i<clients.size(); i++){
             Clients client = clients.get(i);
-            client.updateMsgs( allMsg );//to do
+            client.updateMsgs( allMsg );
         }
     }
     
-    public void addMsg(String s){ //add msg from client to stack
-        this.allMsg.add(s);
-        sendToAll();
+    @Override
+    public synchronized void addMsg(String s){ //add msg from client to stack
+        if(countOfMsgs <10){ //save only last 10 msgs
+            this.allMsg.add(s);
+            countOfMsgs++;
+            sendToAll();
+        }else{
+            this.allMsg.remove(0);
+            this.allMsg.add(s);
+            sendToAll();
+        }        
     }  
 }

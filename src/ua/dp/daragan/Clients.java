@@ -4,5 +4,6 @@ import java.util.LinkedList;
 
 public interface Clients {
     public void updateMsgs(LinkedList<String> allMsg);
-    public void sendMsgToServ(String s);
+    public void shutdown();
+    public int getID();
 }
