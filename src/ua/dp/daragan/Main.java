@@ -3,7 +3,7 @@ package ua.dp.daragan;
 import java.io.IOException;
 import java.net.ServerSocket;
 
-public class ChatApplication {
+public class Main {
 
     public static void main(String[] args) {
         try (ServerSocket serv = Server.getServerSocket()) {
