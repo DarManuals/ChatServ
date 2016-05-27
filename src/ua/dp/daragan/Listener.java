@@ -12,7 +12,7 @@ public class Listener{
     
     private Listener() {
         clients = new ArrayList<>();
-        allMsg = new LinkedList<>();
+        allMsg = new LinkedList<String>();
     }
     
     public static Listener getListener(){
