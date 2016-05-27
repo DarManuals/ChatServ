@@ -1,3 +1,6 @@
+//use: telnet 127.0.0.1 8080
+//write "exit" to close current connection
+//write "shutdown" to stop server
 package ua.dp.daragan;
 
 import java.io.IOException;
