@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+          http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+          http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+">
+
+    <bean id="SERVER" class="ua.dp.daragan.chatspring.Server" factory-method="getServerSocket" />
+    
+    <bean id="ListMsgStorageService" class="ua.dp.daragan.chatspring.Storages.ListMsgStorageService" />
+    
+    <bean id="LISTNER" class="ua.dp.daragan.chatspring.Listener" factory-method="getListener">
+        <property name="msgStorage" ref="ListMsgStorageService" />
+    </bean>
+    
+    <bean id="Client" class="ua.dp.daragan.chatspring.Client" scope="prototype">
+        <constructor-arg value="#{SERVER.accept()}" />
+        <property name="clListner" ref="LISTNER" />
+    </bean>       
+</beans>
